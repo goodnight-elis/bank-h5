@@ -1,0 +1,303 @@
+/* ========================================
+ * 对话模式 Markdown 样式（AiStreamRender / MarkdownRenderer 共用）
+ * 根选择器: .markdown-body.chat-page
+ *
+ * 维护说明:
+ * - 本文件是对话气泡中 Markdown 样式的唯一来源
+ * - 外部 less 是全局样式，无需 :deep() 穿透
+ * - 冲突值以 AiStreamRender 实际生效样式为准
+ * ======================================== */
+
+.markdown-body.chat-page {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1c1f23;
+  word-break: break-word;
+  -webkit-user-select: text;
+  user-select: text;
+  font-family: "PingFangSC-Regular", "PingFang SC", "Microsoft YaHei",
+    "Hiragino Sans GB", sans-serif;
+
+  /* 标题 */
+  h1 {
+    opacity: 1;
+    color: #ff7538;
+    font-family: PingFang SC;
+    font-weight: medium;
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: 2px;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    opacity: 1;
+    color: #ff7538;
+    font-family: PingFang SC;
+    font-weight: medium;
+    font-size: 17px;
+    line-height: 24px;
+    letter-spacing: 2px;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    opacity: 1;
+    color: #1c1f23;
+    font-family: PingFang SC;
+    font-weight: medium;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 2px;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  h4 {
+    opacity: 1;
+    color: #1c1f23;
+    font-family: PingFang SC;
+    font-weight: medium;
+    font-size: 15px;
+    line-height: 24px;
+    letter-spacing: 2px;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+
+  /* 间距优化 */
+  h2 + h3,
+  h3 + h4 {
+    margin-top: 0;
+  }
+
+  h3 + table {
+    margin-top: 0;
+  }
+
+  p + p {
+    margin-top: 8px;
+  }
+
+  /* 段落 */
+  p {
+    opacity: 1;
+    color: #1c1f23;
+    font-family: PingFang SC;
+    font-weight: regular;
+    line-height: 22px;
+    letter-spacing: 0px;
+    text-align: left;
+  }
+
+  /* markstream-vue 段落节点 */
+  .paragraph-node {
+    font-size: 15px;
+    margin: 0 !important;
+  }
+
+  /* 链接 */
+  a {
+    color: #1989fa;
+    text-decoration: none;
+
+    &:active {
+      color: #0f6cc7;
+    }
+  }
+
+  /* 列表 */
+  ul,
+  ol {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  li {
+    opacity: 1;
+    color: #1c1f23;
+    font-family: PingFang SC;
+    line-height: 22px;
+    letter-spacing: 0px;
+    text-align: left;
+    padding-left: 0;
+
+    strong {
+      color: #889099;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  }
+
+  /* 代码块 */
+  pre {
+    background: #f5f6f8;
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  code {
+    font-size: 13px;
+  }
+
+  p code,
+  li code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+  }
+
+  /* 引用块 */
+  blockquote {
+    border-left: none !important;
+    padding-left: 0 !important;
+    margin: 12px 0;
+    color: #666;
+  }
+
+  /* 表格 */
+  table {
+    display: table;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin: 8px 0;
+    width: 100%;
+    font-size: 14px;
+    table-layout: auto;
+
+    thead th {
+      background-color: #f7f8fa;
+      font-weight: normal;
+      color: #889099;
+      border-bottom-width: 0;
+    }
+
+    tbody tr:hover {
+      background: unset;
+    }
+  }
+
+  /* markstream-vue 表格容器（横向滚动） */
+  [data-node-type="table"] {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+  }
+
+  th,
+  td {
+    border: 0.5px solid #D9D9D9;
+    padding: 12px;
+    text-align: center;
+    background: #f7f8fa;
+  }
+
+  th {
+    background: #f7f8fa;
+    color: #889099;
+    white-space: nowrap;
+  }
+
+  td {
+    color: #1c1f23;
+    word-break: break-all;
+    white-space: normal;
+  }
+
+  /* 图片 */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 8px 0;
+  }
+
+  /* 分隔线 */
+  hr {
+    border: none;
+    border-top: 1px solid #e8e8e8;
+    margin: 16px 0;
+  }
+
+  /* em */
+  em {
+    font-style: normal !important;
+  }
+
+  /* 自定义样式：高亮背景 */
+  .text-highlight {
+    background: #fff7e6;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  /* markstream-vue 节点插槽 */
+  .node-slot {
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* 信息行布局（MarkdownRenderer 全屏页后处理使用） */
+  .info-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin: 2px 0 8px;
+  }
+
+  .label {
+    font-weight: normal;
+    line-height: 22px;
+    color: #889099;
+    flex: 0 0 94px;
+  }
+
+  .value {
+    font-weight: normal;
+    line-height: 22px;
+    color: #1c1f23;
+    min-width: 0;
+    font-style: normal;
+  }
+}
+
+/* markstream-vue 打字机光标（预留） */
+// .aistream-render .ms-cursor,
+// .aistream-render [class*="cursor"] {
+//   display: inline-block;
+//   width: 2px;
+//   height: 1em;
+//   background: currentColor;
+//   margin-left: 2px;
+//   vertical-align: text-bottom;
+//   animation: blink 1s step-end infinite;
+// }
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

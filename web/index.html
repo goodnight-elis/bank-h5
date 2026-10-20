@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <% if (mode === 'development' || mode === 'test') { %>
+    <script type="text/javascript" src="/lib/vconsole/vconsole.min.js"></script>
+    <script type="text/javascript">
+      var vConsole = new VConsole()
+      </script>
+    <% } %>
+    <title>ai-agent-mobile</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/javascript" src="/serverConfig.js"></script>
+    <script src="/static/libs/jsbridge/jsbridge-1.0.4.js"></script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
