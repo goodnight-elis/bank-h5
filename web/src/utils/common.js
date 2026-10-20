@@ -42,6 +42,33 @@ export function jumpChatBIApp(url) {
 }
 
 /**
+ * 根据按钮数据生成 App 路由跳转链接（供 openWebView 使用）
+ * - 传入字符串直接返回
+ * - 优先使用显式的 url / path
+ * - 否则按 app://<route>?<query> 约定拼接业务参数
+ * @param {object|string} data - 按钮点击数据
+ * @returns {string} 跳转链接
+ */
+export function generateAppRouteUrl(data) {
+  if (!data) return '';
+  if (typeof data === 'string') return data;
+  if (data.url) return data.url;
+  if (data.path) return data.path;
+
+  const route = data.route || data.appUrl || data.app_url || 'open';
+  const reserved = ['route', 'appUrl', 'app_url', 'action', 'qa_index'];
+  const query = Object.keys(data)
+    .filter((k) => !reserved.includes(k))
+    .map((k) => {
+      const v = data[k];
+      return `${encodeURIComponent(k)}=${encodeURIComponent(v == null ? '' : v)}`;
+    })
+    .join('&');
+  const base = route.includes('://') || route.startsWith('/') ? route : `app://${route}`;
+  return query ? `${base}${base.includes('?') ? '&' : '?'}${query}` : base;
+}
+
+/**
  * 会话过期跳转登录（统一走 envAdapter）
  */
 export function goToLogin() {

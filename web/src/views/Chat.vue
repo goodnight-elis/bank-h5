@@ -70,7 +70,7 @@
  * 核心功能：
  * - 对话：消息收发（SSE 流式）、备选答案、快捷胶囊、输入框
  * - 历史对话胶囊：显示"历史对话"，点击跳转到上一期会话页
- * - 抽屉菜单：新建对话、偏好设置、报告历史、对话历史列表（长按编辑/删除）
+  * - 抽屉菜单：新建对话、报告历史、对话历史列表（长按编辑/删除）
  */
 import { ref, watch, computed, nextTick, onUnmounted, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -93,7 +93,6 @@ import {
   submitFeedback,
   getGuidance,
 } from "../api/chat";
-import preferenceAPI from "../api/preference";
 
 const route = useRoute();
 const router = useRouter();
@@ -106,47 +105,8 @@ const inputBarHeight = ref(118);
 const uploadedFiles = ref([]);
 const previousSession = ref(null);
 const fetchedChips = ref([]); // 功能胶囊（HTTP 接口获取）
-/** 是否已执行过初始化引导检查（避免重复调用 getOnboardingStatus / 重复发送 ping_110） */
-const hasCheckedInit = ref(true);
 const source = ref(route.query.source || "");
 const linkedpreVisitPeported = ref(route.query.reportId || "");
-/**
- * 初始化检查：调用 getOnboardingStatus 判断是否需要偏好设置引导
- * 接口为 POST，入参 user_id、session_id，需当前会话就绪后调用。
- * 若 needsOnboarding 为 true（需要引导），则发送 ping_110 触发 agent 对话（不显示在信息流中）
- * 由路由 watcher 在会话建立后触发，hasCheckedInit 保证整次生命周期只执行一次
- */
-async function checkInit() {
-  const userId = chatStore.userId;
-  const sessionId = chatStore.currentSessionId;
-  // user_id / session_id 缺失或已检查过则跳过
-  if (!userId) {
-    return;
-  }
-
-  try {
-    const res = await preferenceAPI.getOnboardingStatus(userId, sessionId);
-    hasCheckedInit.value = res?.needsOnboarding;
-    chatStore.preferenceEnabled = res?.needsOnboarding;
-    // 需要引导时，发送 ping_110 触发 agent 对话（不显示在信息流中）
-    if (true || hasCheckedInit.value) {
-      await chatStore.send("ping_110");
-      // 从消息列表中移除 ping_110 用户消息，不显示在信息流
-      const session = chatStore.currentSession;
-      if (session) {
-        const pingMsgIndex = session.messages.findLastIndex(
-          (m) => m.role === "user" && m.content === "ping_110"
-        );
-        if (pingMsgIndex !== -1) {
-          session.messages.splice(pingMsgIndex, 1);
-        }
-      }
-      hasCheckedInit.value = false;
-    }
-  } catch (err) {
-    console.error("[Chat] 初始化检查失败:", err);
-  }
-}
 const watchIoskeyBoardHeight = () => {
   window.scrollTo(0, 0);
   const bridge = window.pluginHelper?.device;
@@ -489,17 +449,6 @@ function handleVoiceInput(type) {
   }
 
   // showToast("语音输入功能开发中");
-}
-
-/**
- * preference 模式提交：走普通对话流（/v1/chat/stream），不使用 resume 接口
- * 先清除 interrupt 面板状态，再把回答作为一条普通新消息发送，触发新一轮 AI 回复
- * @param {string} answer - 用户选择或输入的回答（跳过/关闭时传空）
- * @param {boolean} [hideUserMessage=false] - 跳过/关闭时为 true，不展示用户空气泡
- */
-function respondPreference(answer, hideUserMessage = false) {
-  chatStore.clearInterrupt();
-  chatStore.send(answer, [], [], { hideUserMessage });
 }
 
 /**

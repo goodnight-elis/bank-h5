@@ -257,7 +257,7 @@ export const useChatStore = defineStore("chat", {
       options = {},
       linkedpreVisitPeported = ""
     ) {
-      // preference 跳过/关闭：options.hideUserMessage 时允许发送空消息（不在对话流中产生空气泡）
+      // options.hideUserMessage 时允许发送空消息（不在对话流中产生空气泡）
       if (!options.hideUserMessage) {
         if (!userText.trim() && fileIds.length === 0) return;
       }
@@ -293,7 +293,7 @@ export const useChatStore = defineStore("chat", {
       if (session.isStreaming) {
         return;
       }
-      // 添加用户消息（preference 跳过/关闭时 options.hideUserMessage，跳过以避免空气泡）
+      // 添加用户消息（options.hideUserMessage 为真时跳过，避免空气泡）
       if (!options.hideUserMessage) {
         session.messages.push({
           id: `user-${Date.now()}`,
@@ -582,7 +582,6 @@ export const useChatStore = defineStore("chat", {
      * - ui: 气泡附属交互控件（chips/buttons，覆盖型）
      * - card: 全局独立卡片（异步生成完成，可能需等待流式结束）
      * - interrupt: 追问/澄清（暂停正文，展示交互 UI，回答走 resume）
-     * - preference: 偏好收集（数据格式同 interrupt，经 /v1/chat/stream 下发，回答走普通对话流而非 resume）
      * - task: 异步任务通知（轻提示，不中断流）
      * - done: 流式结束（携带 message_id）
      * - violation: 内容违规，强制终止
@@ -648,11 +647,7 @@ export const useChatStore = defineStore("chat", {
         return;
       }
 
-      // event: interrupt / preference - 追问/澄清/偏好收集，暂停正文渲染
-      // preference 数据格式与 interrupt 一致，同样经 /v1/chat/stream 下发（不走 resume）；
-      // 区别仅在于回答提交方式：interrupt 走 resume 接口，preference 走普通对话流。
-      // 注：interrupt 与 preference 互斥，同一条流中不会同时出现（由后端保证）。
-      //     路由唯一判据——本次流是否返回过 event:preference：是→回答走普通对话流，否→正常逻辑。
+      // event: interrupt - 追问/澄清，暂停正文渲染
       if (eventType === "interrupt") {
         // 终止 SSE（暂停了正文流）
         if (session.abortController) {
@@ -738,7 +733,7 @@ export const useChatStore = defineStore("chat", {
             //     : [],
           });
         }
-        // 存储 interrupt 数据到 session（isPreference 标记回答路由）
+        // 存储 interrupt 数据到 session
         session.interrupt = {
           qa_index: chunk?.qa_index,
           question: chunk?.question || "",
@@ -763,8 +758,7 @@ export const useChatStore = defineStore("chat", {
         return;
       }
 
-      // event: finish - 偏好收集环节结束：收尾当前流式消息，调用 getOnboardingStatus 更新 preference 状态
-      // （send 流专用；resume 流的 finish 在 resumeInterrupt 内单独处理）
+      // event: finish - 收尾当前流式消息（send 流专用；resume 流的 finish 在 resumeInterrupt 内单独处理）
       if (eventType === "finish") {
         if (streamBuffer) {
           streamBuffer.flush();
@@ -998,7 +992,7 @@ export const useChatStore = defineStore("chat", {
 
     /**
      * 清除当前会话的 interrupt 状态（不发起请求）
-     * 用于 preference 模式：回答走普通对话流（非 resume），跳过/关闭/已回答时仅清除面板状态
+     * 跳过/关闭/已回答时仅清除面板状态
      */
     clearInterrupt() {
       const session = this.sessions[this.currentSessionId];
@@ -1090,8 +1084,8 @@ export const useChatStore = defineStore("chat", {
     },
 
     /**
-     * 清除当前会话的 interrupt 状态（不发起请求）
-     * 用于 preference 模式：回答走普通对话流（非 resume），跳过/关闭/已回答时仅清除面板状态
+     * 停止指定任务的轮询定时器
+     * @param {string} taskId - 任务 ID
      */
     _stopTaskPolling(taskId) {
       const poller = this.taskPollers[taskId];

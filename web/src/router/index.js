@@ -31,14 +31,6 @@ const routes = [
     }
   },
   {
-    path: '/preference',
-    name: 'UserPreference',
-    component: () => import('@/views/UserPreference.vue'),
-    meta: {
-      title: '用户偏好'
-    }
-  },
-  {
     path: '/report-history',
     name: 'ReportHistory',
     component: () => import('@/views/ReportHistory.vue'),

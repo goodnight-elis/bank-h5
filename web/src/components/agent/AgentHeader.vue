@@ -72,20 +72,6 @@
         </button>
 
         <nav class="drawer-menu" aria-label="功能菜单">
-          <!-- <button
-            type="button"
-            class="drawer-menu-item"
-            @click="handleDrawerAction('settings')"
-          >
-            <img
-              src="@/assets/love.png"
-              alt="偏好设置"
-              class="preference-icon"
-              aria-hidden="true"
-            />
-            <span class="drawer-menu-text">偏好设置</span>
-            <span class="drawer-arrow" aria-hidden="true"></span>
-          </button> -->
           <button
             type="button"
             class="drawer-menu-item"
@@ -423,7 +409,7 @@
  * 智能体对话页顶部导航栏
  *
  * 功能：
- * - 左侧菜单按钮：打开抽屉，展示新建对话、偏好设置、报告历史、对话历史列表
+ * - 左侧菜单按钮：打开抽屉，展示新建对话、报告历史、对话历史列表
  * - 中间历史胶囊：显示上一期会话标题，点击触发纵向翻页切换到历史视图（由父组件控制）
  * - 右侧关闭按钮：返回上一页
  * - 对话历史列表：支持点击跳转、点击左侧三个点弹出修改标题/删除操作菜单
@@ -866,9 +852,6 @@ async function handleDrawerAction(type) {
     }
     router.push("/chat");
     closeDrawer();
-  } else if (type === "settings") {
-    router.push("/preference");
-    closeDrawer();
   } else if (type === "history") {
     router.push("/report-history");
     closeDrawer();
@@ -1191,13 +1174,6 @@ async function confirmBatchDelete() {
 
 .drawer-menu-text {
   line-height: 22px;
-}
-
-.preference-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  background: none;
 }
 
 .report-icon {

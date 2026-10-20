@@ -1,10 +1,9 @@
 import request from "../utils/request";
 
 /**
- * 获取报告
+ * 获取报告 Markdown 内容
  *
- * 获取报告
- * GET /v1/users/{user_id}/preferences
+ * GET /v1/report/{reportId}
  * @param {string|number} reportId - 报告 ID
  * @returns {Promise} 获取报告
  */
